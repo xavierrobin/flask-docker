@@ -24,6 +24,11 @@ def create_app(config_class=Config):
     from app.models.posts import Post
     admin.add_view(ModelView(Post, db.session))
 
+    from app.models.widgets import Widget
+    admin.add_view(ModelView(Widget, db.session))
+
+    from app.models.widget_data import WidgetData
+    admin.add_view(ModelView(WidgetData, db.session))
 
     db.init_app(app)
     migrate.init_app(app, db)

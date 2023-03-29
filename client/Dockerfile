@@ -32,6 +32,16 @@ RUN yarn build
 # If using npm comment out above and use below instead
 # RUN npm run build
 
+# Build image for development environment
+FROM base AS dev
+ENV NODE_ENV=development
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+RUN yarn install --frozen-lockfile --production=false
+CMD ["yarn", "dev"]
+
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
