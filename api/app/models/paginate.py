@@ -1,4 +1,4 @@
-from flask import url_for
+from flask import url_for, request
 
 class PaginatedAPIMixin(object):
     @staticmethod
@@ -13,12 +13,8 @@ class PaginatedAPIMixin(object):
                 'total_items': resources.total
             },
             '_links': {
-                'self': url_for(endpoint, page=page, per_page=per_page,
-                                **kwargs),
-                'next': url_for(endpoint, page=page + 1, per_page=per_page,
-                                **kwargs) if resources.has_next else None,
-                'prev': url_for(endpoint, page=page - 1, per_page=per_page,
-                                **kwargs) if resources.has_prev else None
-            }
+                'self': '{}?{}'.format(url_for(endpoint), request.query_string.decode()),
+                'next': '{}?{}&page={}&per_page={}'.format(url_for(endpoint), request.query_string.decode(), page+1, per_page) if resources.has_next else None,
+                'prev': '{}?{}&page={}&per_page={}'.format(url_for(endpoint), request.query_string.decode(), page-1, per_page) if resources.has_prev else None            }
         }
         return data

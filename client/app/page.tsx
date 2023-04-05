@@ -26,6 +26,7 @@ async function Home({}) {
               id={widget.id}
               name={widget.name}
               latest_data={widget.latest_data}
+              history='true'
               />
               )
               )              
