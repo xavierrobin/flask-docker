@@ -20,6 +20,7 @@ services:
       - database
     environment:
       - FLASK_APP=${FLASK_APP}
+      - FLASK_ENV=${FLASK_ENV}
       - FLASK_DEBUG=${FLASK_DEBUG}
       - DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@database:5432/${DATABASE_NAME}
       - SECRET_KEY=${SECRET_KEY}
