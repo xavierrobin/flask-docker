@@ -10,8 +10,12 @@ function ModalBs(props, args) {
   const toggle = () => setModal(!modal);
 
   return (
-    <div>
-      <i className="icon text-muted" onClick={toggle}>edit</i>
+    <div className="d-inline">
+      {props && props.icon === true
+        ? <i className="icon text-muted" onClick={toggle}>edit</i>
+        : <button className="d-inline btn btn-sm btn-outline-success" onClick={toggle}>{props.toggleText}</button>
+      }
+      
       <Modal isOpen={modal} toggle={toggle} size='lg' {...args}>
         <ModalHeader toggle={toggle}>Update status</ModalHeader>
         <ModalBody>

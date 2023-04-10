@@ -3,6 +3,9 @@ import { FunctionComponent, useState } from "react";
 import { Formik, Field, Form, FormikHelpers } from 'formik';
 import { useRouter } from 'next/navigation';
 import { Button, ModalFooter } from 'reactstrap';
+import {Tiptap} from './Tiptap.js'
+import StarterKit from '@tiptap/starter-kit'
+import DOMPurify from 'dompurify';
 
 interface Values {
   content: string;
@@ -27,7 +30,7 @@ const WidgetDataForm: FunctionComponent = (props: any) => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                  content: values.content,
+                  content: DOMPurify.sanitize(values.content),
                   widget_id: props.widget_id,
                 }),
                 cache: 'no-store'
@@ -36,9 +39,9 @@ const WidgetDataForm: FunctionComponent = (props: any) => {
                 isValid: true,
                 msg: `Status successfully updated.`,
               });
+              router.push('/?u=true');
               // close the modal before redirecting to homepage
               props.modalToggle(false)
-              router.push("/");
             } catch (error) {
               console.log(error);
               setStatus({
@@ -61,18 +64,19 @@ const WidgetDataForm: FunctionComponent = (props: any) => {
         <div className="form-group">
           <label className="text-secondary fw-medium mb-2 fs-4" htmlFor="content">Status</label>
           <Field
-            id="content"
             name="content"
+            as={Tiptap}
+            extensions={[StarterKit]} 
+            id="content"
             placeholder="Provide status here."
             className="form-control form-control-lg mb-2"
-            as="textarea"
           />
         </div>
         
-        {values && values.content && <>
+        {/* {values && values.content && <>
         <p className="text-secondary fw-medium mb-2 fs-4">Preview</p>
         <p className="bg-lvl2 p-3">{values.content}</p>
-        </>}
+        </>} */}
 
         <ModalFooter className="ps-0 pe-0">
           <button className="btn btn-success" type="submit">Send</button>

@@ -1,0 +1,12 @@
+.ProseMirror {
+    background-color: #f5f6f7 !important;
+    padding: 1rem !important;
+  }
+
+.ProseMirror p.is-editor-empty:first-child::before {
+    color: grey;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }

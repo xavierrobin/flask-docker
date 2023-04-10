@@ -3,33 +3,43 @@ import Link from 'next/link';
 
 function WidgetBs(props) {
     return (
-    <div className="col">
+    <div>
         <div className="card card-bordered" key={props.id} >
         <div className="card-body">
         {props.history && props.history == 'true' && (
-            <h3 className="card-title">
-            {props.name}
-                <>
-                    <div className="float-end d-inline">
-                        <ModalBs 
-                            widget_id={props.id} 
-                            />
+            <div className='row'>
+                <div className='col-9'>
+                    <h3 className="card-title">
+                        {props.name}
+                    </h3>
+                </div>
+                <div className='col-3'>
+                    <div className='float-end d-inline'>
+                            <ModalBs 
+                                widget_id={props.id}
+                                icon={true}
+                                />
+                            <Link href={"/widgets/" + props.id + '?page=1'}>
+                                <i className="icon text-muted">history</i>
+                            </Link>
                     </div>
-                    <div className="float-end d-inline">
-                        <Link href={"/widgets/" + props.id}>
-                            <i className="icon text-muted">history</i>
-                        </Link>
-                    </div>
-                </>
-                </h3>
-            )}
-            <p className="card-text mb-2">
-            {props.latest_data
-            ? props.latest_data.content
-            : "No data yet."
+                </div>
+            </div>
+            )
             }
-            </p>
-            <p className="card-text">
+            
+            {props.latest_data && props.latest_data.content !== ''
+                            ? (
+                                <div dangerouslySetInnerHTML={{ 
+                                    __html: props.latest_data.content
+                                }} />
+                            )
+                            : <div className="card-text mb-2 text-muted">No data yet. <ModalBs widget_id={props.id} icon={false} toggleText={'Add data'}
+                            />
+                              </div>
+                            }
+            
+            <p className="card-text mt-2">
             <small className="text-muted">
                 { props.latest_data 
                 ? "Updated on " + props.latest_data.timestamp

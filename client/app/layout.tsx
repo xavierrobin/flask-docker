@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import LeftPane from '../components/LeftPane';
 
 export const metadata = {
   title: 'Create Next App',
@@ -42,8 +43,14 @@ export default function RootLayout({
         </div>
       </nav>
       </section>
-      
-        {children}
+      <div className="row">
+        <div className='col-md-3'>
+          <LeftPane />
+        </div>
+        <div className='col-md-9'>
+          {children}
+        </div>
+      </div>
       </body>
     </html>
   )

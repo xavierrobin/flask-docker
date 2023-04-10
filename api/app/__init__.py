@@ -16,25 +16,19 @@ def create_app(config_class=Config):
     # Flask-Admin
     admin = Admin(app, template_mode='bootstrap4')
 
-    class UserModelView(ModelView):
-        page_size = 10  # the number of entries to display on the list view
-    from app.models.users import User
-    admin.add_view(UserModelView(User, db.session))
-
-    from app.models.posts import Post
-    admin.add_view(ModelView(Post, db.session))
-
     from app.models.widgets import Widget
     admin.add_view(ModelView(Widget, db.session))
 
     from app.models.widget_data import WidgetData
     admin.add_view(ModelView(WidgetData, db.session))
 
+    from app.models.clients import Client
+    admin.add_view(ModelView(Client, db.session))
+
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # Blueprints
-
+    # Blueprints    
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
 

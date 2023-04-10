@@ -4,7 +4,7 @@ import WidgetBs from '../components/WidgetBs.js'
 interface Widget {
   id: number;
   name: string;
-  latest_data: any;
+  widget_data: any;
 }
 
 async function getData() {
@@ -21,13 +21,15 @@ async function Home({}) {
   return (
     <main className="container-fluid">
       <div className="row row-cols-1 row-cols-md-3 g-4">
-          {data && data.items && data.items.map((widget: Widget) => (
+          {data && data.data.map((widget: Widget) => (
+            <div className="col col-md-6 col-xl-6">
             <WidgetBs 
               id={widget.id}
               name={widget.name}
-              latest_data={widget.latest_data}
+              latest_data={widget.widget_data[0]}
               history='true'
               />
+            </div>
               )
               )              
             }

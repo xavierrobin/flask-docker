@@ -1,18 +1,15 @@
 import BackButton from '../../../../components/BackButton.js';
 import Pagination from '../../../../components/Pagination';
 import WidgetBs from '../../../../components/WidgetBs';
-import Link from 'next/link';
 import { headers } from 'next/headers';
 
-async function getData(id: number, page: number) {
-    const headersList = headers();
-    const header_url = headersList.get('x-url') || "";
-    const urlParams = new URLSearchParams(header_url);
-    const urlPage = urlParams.get('page');
-    console.log('url: ' + header_url);
-    console.log(urlParams);
-
-
+async function getData(id: number) {
+  const headersList = headers();
+  const header_url = headersList.get('x-url') || "";
+  const url = new URL(header_url);
+  const searchParams = url.searchParams;
+  const page = searchParams.get('page')
+  console.log(page)
     if (page == null) {
         const res = await fetch(`http://host.docker.internal:8000/widget_data?widget_id=${id}`, { cache: 'no-store' });
         if (!res.ok) {
@@ -20,7 +17,7 @@ async function getData(id: number, page: number) {
           }
           return res.json();
     } else {
-        const res = await fetch(`http://host.docker.internal:8000/widget_data?widget_id=${id}&page=${page}&per_page=10`, { cache: 'no-store' });
+        const res = await fetch(`http://host.docker.internal:8000/widget_data?widget_id=${id}&page=${page}`, { cache: 'no-store' });
         if (!res.ok) {
             throw new Error('Failed to fetch data');
           }
@@ -29,12 +26,16 @@ async function getData(id: number, page: number) {
   }
 
 async function WidgetPage({
-    params, context
+    params
   }: {
-    params: { id: number, page: number};
-    context: any
+    params: { id: number}
   }) {
-    const data = await getData(params.id, params.page);
+    const headersList = headers();
+    const header_url = headersList.get('x-url') || "";
+    const url = new URL(header_url);
+    const searchParams = url.searchParams;
+    const page = searchParams.get('page')
+    const data = await getData(params.id);
 
     return (
     <div className="container">
@@ -45,19 +46,21 @@ async function WidgetPage({
                 <p>Review all updates in reverse chronological order.</p>
             </div>
         </blockquote>
-        {data && data.items.map((item: any) => (
+        {data && data.data.map((item: any) => (
           <div className="mb-2">
           <WidgetBs 
             name={item.name}
             latest_data={item}
           />
           </div>
-        )
-            
+        )            
             )
             }
+        {data && (data.data.length === 0) && 'No data.'}
+
       <Pagination 
-        nextPage={data && data._meta.page + 1}
+        currentPage={page}
+        totalPages={data && data._meta.total_pages}
       />
     </div>
     )

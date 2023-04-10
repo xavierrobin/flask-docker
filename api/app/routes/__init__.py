@@ -1,10 +1,14 @@
 from flask import Blueprint
 from flask_cors import CORS
+from flask_restx import Api
 
 bp = Blueprint('routes', __name__)
 CORS(bp)
+api = Api(bp,
+          title='My API',
+          version='1.0',
+          description='A description of my API')
 
-from app.routes import users
-from app.routes import posts
-from app.routes import widgets
-from app.routes import widget_data
+from .clients import api
+from .widgets import api
+from .widget_data import api

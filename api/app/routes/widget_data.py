@@ -1,43 +1,91 @@
-from flask import jsonify
-from flask import request
-from flask import url_for
+from flask import request, jsonify
 from app import db
-from app.routes import bp
 from app.models.widget_data import WidgetData
 from app.models.widgets import Widget
 from flask import current_app as app
-from flask_cors import cross_origin
 from app.errors import errors
 from sqlalchemy import desc
+from app.routes import api
 
-@bp.route('/widget_data', methods=['GET'])
-def get_widget_data():
-    widget_filter = request.args.get('widget_id', default='', type=int)
-    if widget_filter is None or widget_filter == '':
-        return errors.bad_request('must include widget_id field')
-    page = request.args.get('page', 1, type=int)
-    per_page = min(request.args.get('per_page', app.config["USERS_PER_PAGE"], type=int), 100)
-    data = WidgetData.to_collection_dict(WidgetData.query.filter_by(widget = Widget.query.get(widget_filter)).order_by(desc(WidgetData.timestamp)), page, per_page, 'routes.get_widget_data')
-    return jsonify(data)
+from flask_restx import Namespace, Resource, fields, reqparse, abort
 
-@bp.route('/widget_data/<int:id>', methods=['GET'])
-def get_widget_data_single(id):
-    return jsonify(WidgetData.query.get_or_404(id).to_dict())
+ns = Namespace('widget_data', description='Widget_data operations')
+api.add_namespace(ns)
 
-@bp.route('/widget_data', methods=['POST'])
-def create_widget_data():
-    data = request.get_json() or {}
-    if 'content' not in data or 'widget_id' not in data:
-        return errors.bad_request('must include content and widget_id fields')
-    widget_data = WidgetData()
-    widget_data.from_dict(data)
-    db.session.add(widget_data)
-    db.session.commit()
-    response = jsonify(widget_data.to_dict())
-    response.status_code = 201
-    response.headers['Location'] = url_for('routes.get_widget_data_single', id=widget_data.id)
-    return response
+parser = reqparse.RequestParser()
 
-@bp.route('/test')
-def test():
-    return jsonify({'message': 'Hello, World!'})
+widget_model = ns.model('Widget', {
+    'id': fields.Integer(readonly=True, description='The unique identifier of a widget'),
+    'name': fields.String(required=True, description='The name of a widget'),
+})
+
+widget_data_model = ns.model('WidgetData', {
+    'id': fields.Integer(required=True, description='The widget data identifier'),
+    'content': fields.String(required=True, description='The content of the widget data'),
+    'timestamp': fields.DateTime(required=False, description='The timestamp of the widget data'),
+    'widget': fields.Nested(widget_model, description='The widget associated with the widget_data'),
+    #'widget_id': fields.Integer(widget_model, description='The widget associated with the widget_data'),
+})
+
+@ns.route('')
+class WidgetDataList(Resource):
+    @api.marshal_with(ns.model('WidgetDataListResponse', {
+        'data': fields.List(fields.Nested(widget_data_model)),
+        '_meta': fields.Nested(ns.model('Pagination', {
+            'total_items': fields.Integer,
+            'total_pages': fields.Integer,
+            'links': fields.Raw,
+        }))
+    }))
+    def get(self):
+        parser.add_argument('widget_id', type=int, help='Widget ID')
+        args = parser.parse_args()
+        widget_filter = args.get('widget_id')
+        if widget_filter is None:
+            abort(400, message='Missing required query parameter: widget_id')
+        widget = Widget.query.filter_by(id=widget_filter).first()
+        if not widget:
+            abort(404, message='Widget not found') 
+        query = WidgetData.query.filter_by(widget=widget).order_by(desc(WidgetData.timestamp))
+        page = request.args.get('page', 1, type=int)
+        per_page = min(request.args.get('per_page', app.config["ITEMS_PER_PAGE"], type=int), 100)
+        # data = query.order_by(desc(WidgetData.timestamp)).paginate(page, per_page)
+        # return data
+        pagination = query.order_by(desc(WidgetData.timestamp)).paginate(page, per_page)
+
+        data = pagination.items
+        total_items = pagination.total
+        total_pages = pagination.pages
+        links = {}
+        if pagination.has_prev:
+            links['prev'] = api.url_for(WidgetDataList, page=page-1, _external=True)
+        if pagination.has_next:
+            links['next'] = api.url_for(WidgetDataList, page=page+1, _external=True)
+
+        metadata = {
+            'total_items': total_items,
+            'total_pages': total_pages,
+            'links': links
+        }
+        response_data = {'data': data, '_meta': metadata}
+        return response_data
+
+@ns.route('/<int:id>')
+class WidgetDataById(Resource):
+    @api.marshal_list_with(widget_data_model, envelope='data')
+    def get(self, id):
+        return WidgetData.query.get_or_404(id)
+
+
+@ns.route('')
+class WidgetDataPost(Resource):
+    @api.expect(widget_data_model)
+    @api.marshal_with(widget_data_model, code=201)
+    def post(self):
+        data = request.json
+        widget_id = data.get('widget_id')
+        widget = Widget.query.get_or_404(widget_id)
+        widget_data = WidgetData(content=data['content'], widget=widget)
+        db.session.add(widget_data)
+        db.session.commit()
+        return widget_data

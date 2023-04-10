@@ -9,9 +9,16 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tiptap/extension-list-item": "^2.0.2",
+    "@tiptap/extension-placeholder": "^2.0.2",
+    "@tiptap/extension-text-style": "^2.0.2",
+    "@tiptap/pm": "^2.0.2",
+    "@tiptap/react": "^2.0.2",
+    "@tiptap/starter-kit": "^2.0.2",
     "@types/node": "18.15.8",
     "@types/react": "18.0.29",
     "@types/react-dom": "18.0.11",
+    "dompurify": "^3.0.1",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "formik": "^2.2.9",
