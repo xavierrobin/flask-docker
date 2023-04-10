@@ -19,11 +19,19 @@ def create_app(config_class=Config):
     from app.models.widgets import Widget
     admin.add_view(ModelView(Widget, db.session))
 
-    from app.models.widget_data import WidgetData
-    admin.add_view(ModelView(WidgetData, db.session))
-
     from app.models.clients import Client
-    admin.add_view(ModelView(Client, db.session))
+    class ClientView(ModelView):
+        column_searchable_list = ('name', 'bdr_id')
+        form_columns = ('name', 'bdr_id', 'widget_data_list')
+
+    from app.models.widget_data import WidgetData
+    class WidgetDataView(ModelView):
+        column_searchable_list = ('content', 'timestamp')
+        column_filters = ('widget_id', 'client_id')
+        form_columns = ('content', 'timestamp', 'widget', 'client')
+
+    admin.add_view(ClientView(Client, db.session))
+    admin.add_view(WidgetDataView(WidgetData, db.session))
 
     db.init_app(app)
     migrate.init_app(app, db)

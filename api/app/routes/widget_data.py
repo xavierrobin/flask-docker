@@ -2,6 +2,7 @@ from flask import request, jsonify
 from app import db
 from app.models.widget_data import WidgetData
 from app.models.widgets import Widget
+from app.models.clients import Client
 from flask import current_app as app
 from app.errors import errors
 from sqlalchemy import desc
@@ -19,11 +20,18 @@ widget_model = ns.model('Widget', {
     'name': fields.String(required=True, description='The name of a widget'),
 })
 
+client_model = ns.model('Client', {
+    'id': fields.Integer(readonly=True, description='The unique identifier of a client'),
+    'name': fields.String(required=True, description='The name of a client'),
+    'bdr_id': fields.String(required=False, description='The BDR ID of a client')
+})
+
 widget_data_model = ns.model('WidgetData', {
     'id': fields.Integer(required=True, description='The widget data identifier'),
     'content': fields.String(required=True, description='The content of the widget data'),
     'timestamp': fields.DateTime(required=False, description='The timestamp of the widget data'),
     'widget': fields.Nested(widget_model, description='The widget associated with the widget_data'),
+    'client': fields.Nested(client_model, description='The client associated with the widget_data'),
     #'widget_id': fields.Integer(widget_model, description='The widget associated with the widget_data'),
 })
 
@@ -39,14 +47,22 @@ class WidgetDataList(Resource):
     }))
     def get(self):
         parser.add_argument('widget_id', type=int, help='Widget ID')
+        parser.add_argument('client_id', type=int, help='Client ID')
         args = parser.parse_args()
         widget_filter = args.get('widget_id')
+        client_filter = args.get('client_id')
         if widget_filter is None:
             abort(400, message='Missing required query parameter: widget_id')
+        if client_filter is None:
+            abort(400, message='Missing required query parameter: client_id')
         widget = Widget.query.filter_by(id=widget_filter).first()
+        client = Client.query.filter_by(id=client_filter).first()
         if not widget:
             abort(404, message='Widget not found') 
-        query = WidgetData.query.filter_by(widget=widget).order_by(desc(WidgetData.timestamp))
+        if not client:
+            abort(404, message='Client not found') 
+        
+        query = WidgetData.query.filter_by(widget=widget, client=client).order_by(desc(WidgetData.timestamp))
         page = request.args.get('page', 1, type=int)
         per_page = min(request.args.get('per_page', app.config["ITEMS_PER_PAGE"], type=int), 100)
         # data = query.order_by(desc(WidgetData.timestamp)).paginate(page, per_page)
@@ -84,8 +100,10 @@ class WidgetDataPost(Resource):
     def post(self):
         data = request.json
         widget_id = data.get('widget_id')
+        client_id = data.get('client_id')
         widget = Widget.query.get_or_404(widget_id)
-        widget_data = WidgetData(content=data['content'], widget=widget)
+        client = Client.query.get_or_404(client_id)
+        widget_data = WidgetData(content=data['content'], widget=widget, client=client)
         db.session.add(widget_data)
         db.session.commit()
         return widget_data

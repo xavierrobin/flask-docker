@@ -21,6 +21,7 @@ function ModalBs(props, args) {
         <ModalBody>
           <WidgetDataForm
               widget_id={props.widget_id}
+              client_id={props.client_id}
               modalToggle={setModal}
             />
         </ModalBody>

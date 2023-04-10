@@ -9,15 +9,16 @@ async function getData(id: number) {
   const url = new URL(header_url);
   const searchParams = url.searchParams;
   const page = searchParams.get('page')
+  const client_id = searchParams.get('client_id')
   console.log(page)
     if (page == null) {
-        const res = await fetch(`http://host.docker.internal:8000/widget_data?widget_id=${id}`, { cache: 'no-store' });
+        const res = await fetch(`http://host.docker.internal:8000/widget_data?widget_id=${id}&client_id=${client_id}`, { cache: 'no-store' });
         if (!res.ok) {
             throw new Error('Failed to fetch data');
           }
           return res.json();
     } else {
-        const res = await fetch(`http://host.docker.internal:8000/widget_data?widget_id=${id}&page=${page}`, { cache: 'no-store' });
+        const res = await fetch(`http://host.docker.internal:8000/widget_data?widget_id=${id}&client_id=${client_id}&page=${page}`, { cache: 'no-store' });
         if (!res.ok) {
             throw new Error('Failed to fetch data');
           }

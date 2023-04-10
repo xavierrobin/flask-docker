@@ -5,6 +5,7 @@ class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
     bdr_id = db.Column(db.String(255))
+    widget_data_list = db.relationship('WidgetData', backref='client', lazy=True)
 
     def __repr__(self):
         return '<Client {}>'.format(self.name)

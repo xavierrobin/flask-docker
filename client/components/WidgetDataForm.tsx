@@ -2,6 +2,8 @@
 import { FunctionComponent, useState } from "react";
 import { Formik, Field, Form, FormikHelpers } from 'formik';
 import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
+
 import { Button, ModalFooter } from 'reactstrap';
 import {Tiptap} from './Tiptap.js'
 import StarterKit from '@tiptap/starter-kit'
@@ -14,6 +16,7 @@ interface Values {
 const WidgetDataForm: FunctionComponent = (props: any) => {
     const [error, setError] = useState(null);
     const router = useRouter();
+    const pathname = usePathname();
 
     return (
       <div>
@@ -32,6 +35,7 @@ const WidgetDataForm: FunctionComponent = (props: any) => {
                 body: JSON.stringify({
                   content: DOMPurify.sanitize(values.content),
                   widget_id: props.widget_id,
+                  client_id: props.client_id,
                 }),
                 cache: 'no-store'
               });
@@ -39,7 +43,7 @@ const WidgetDataForm: FunctionComponent = (props: any) => {
                 isValid: true,
                 msg: `Status successfully updated.`,
               });
-              router.push('/?u=true');
+              router.push(pathname);
               // close the modal before redirecting to homepage
               props.modalToggle(false)
             } catch (error) {
@@ -72,15 +76,9 @@ const WidgetDataForm: FunctionComponent = (props: any) => {
             className="form-control form-control-lg mb-2"
           />
         </div>
-        
-        {/* {values && values.content && <>
-        <p className="text-secondary fw-medium mb-2 fs-4">Preview</p>
-        <p className="bg-lvl2 p-3">{values.content}</p>
-        </>} */}
 
         <ModalFooter className="ps-0 pe-0">
           <button className="btn btn-success" type="submit">Send</button>
-          
         </ModalFooter>
 
         </Form>

@@ -49,7 +49,6 @@ export const Tiptap = ({ name }) => {
             className={(editor.isActive('bulletList') ? 'btn-outline-primary' : '') + ' btn btn-sm btn-primary'}
         >
             <i className="icon">format_list_bulleted</i>
-
         </button>
         <button
             onClick={(e) => editor.chain().focus().toggleOrderedList().run() && e.preventDefault()}

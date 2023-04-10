@@ -5,6 +5,7 @@ from app.models.widget_data import WidgetData
 from app.routes import api
 from flask_restx import Namespace, Resource, fields
 from sqlalchemy import desc, and_
+from sqlalchemy.orm import load_only
 
 ns = Namespace('widgets', description='Widgets operations')
 api.add_namespace(ns)
@@ -33,6 +34,13 @@ class Widgets(Resource):
     def get(self):
         name_filter = request.args.get('name', default='', type=str)
         widgets = Widget.query.filter(Widget.name.ilike(f'%{name_filter}%')).all()
+        
+        client_filter = request.args.get('client_id', default='', type=str)
+        
         for widget in widgets:
-            widget.widget_data = [widget.widget_data.order_by(WidgetData.timestamp.desc()).first()]
+            widget_data = WidgetData.query.filter_by(widget_id=widget.id, client_id=client_filter).order_by(WidgetData.timestamp.desc()).first()
+            if widget_data is not None:
+                widget.widget_data = [widget_data]
+            else:
+                widget.widget_data = []
         return widgets

@@ -5,7 +5,7 @@ from app.models.widget_data import WidgetData
 class Widget(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    widget_data = db.relationship('WidgetData', backref='widget', lazy='dynamic')
+    widget_data = db.relationship('WidgetData', backref='widget', lazy=True)
 
     def __repr__(self):
         return '<Widget {}>'.format(self.name)

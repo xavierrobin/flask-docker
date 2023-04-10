@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import LeftPane from '../components/LeftPane';
+import NextTopLoader from 'nextjs-toploader';
 
 export const metadata = {
   title: 'Create Next App',
@@ -19,6 +20,7 @@ export default function RootLayout({
       </head>
       <body>
       <section>
+      <NextTopLoader color="#FF0000" />
       <nav className="navbar navbar-expand-lg bg-body-tertiary border-bottom mb-3">
         <div className="container-fluid">
           <a className="navbar-brand" href="#">
@@ -48,6 +50,7 @@ export default function RootLayout({
           <LeftPane />
         </div>
         <div className='col-md-9'>
+
           {children}
         </div>
       </div>
