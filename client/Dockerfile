@@ -10,7 +10,7 @@ WORKDIR /app
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f package-lock.json ]; then npm install; \
   elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
   else echo "Lockfile not found." && exit 1; \
   fi
@@ -27,10 +27,10 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn build
+# RUN yarn build
 
 # If using npm comment out above and use below instead
-# RUN npm run build
+RUN npm run build
 
 # Build image for development environment
 FROM base AS dev
@@ -39,8 +39,12 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN yarn install --frozen-lockfile --production=false
-CMD ["yarn", "dev"]
+RUN npm install
+CMD ["npm", "run", "dev"]
+
+# If using yarn uncomment
+# RUN yarn install --frozen-lockfile --production=false
+# CMD ["yarn", "dev"]
 
 # Production image, copy all the files and run next
 FROM base AS runner

@@ -12,3 +12,4 @@ api = Api(bp,
 from .clients import api
 from .widgets import api
 from .widget_data import api
+from .teams import api

@@ -41,11 +41,13 @@ services:
       target: dev
     volumes:
       - ./client:/app
+      - /app/node_modules
+      - /app/.next
     depends_on:
       - python
     environment:
-       - NEXT_PUBLIC_ENTRYPOINT=${NEXT_PUBLIC_ENTRYPOINT}
-       - NEXT_API_ENTRYPOINT=${NEXT_API_ENTRYPOINT}
-       - NEXT_DOCKER_ENTRYPOINT=${NEXT_DOCKER_ENTRYPOINT}
+       - NEXT_PUBLIC_API_CLIENT_ENTRYPOINT=${NEXT_PUBLIC_API_CLIENT_ENTRYPOINT}
+       - NEXT_API_SERVER_ENTRYPOINT=${NEXT_API_SERVER_ENTRYPOINT}
+       - NEXT_CLIENT_ENTRYPOINT=${NEXT_CLIENT_ENTRYPOINT}
     ports:
       - "3000:3000"

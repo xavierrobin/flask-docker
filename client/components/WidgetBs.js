@@ -36,7 +36,7 @@ function WidgetBs(props) {
                         __html: props.latest_data.content
                     }} />
                 )
-                : <div className="card-text mb-2 text-muted">No data yet. <ModalBs widget_id={props.id} client_id={props.client_id} icon={false} toggleText={'Add data'}
+                : <div className="card-text mb-2 text-danger">No data yet. <ModalBs widget_id={props.id} client_id={props.client_id} icon={false} toggleText={'Add data'}
                 />
                     </div>
                 }

@@ -31,8 +31,7 @@ widget_data_model = ns.model('WidgetData', {
     'content': fields.String(required=True, description='The content of the widget data'),
     'timestamp': fields.DateTime(required=False, description='The timestamp of the widget data'),
     'widget': fields.Nested(widget_model, description='The widget associated with the widget_data'),
-    'client': fields.Nested(client_model, description='The client associated with the widget_data'),
-    #'widget_id': fields.Integer(widget_model, description='The widget associated with the widget_data'),
+    'client': fields.Nested(client_model, description='The client associated with the widget_data')
 })
 
 @ns.route('')
@@ -95,15 +94,17 @@ class WidgetDataById(Resource):
 
 @ns.route('')
 class WidgetDataPost(Resource):
-    @api.expect(widget_data_model)
     @api.marshal_with(widget_data_model, code=201)
     def post(self):
         data = request.json
         widget_id = data.get('widget_id')
         client_id = data.get('client_id')
         widget = Widget.query.get_or_404(widget_id)
-        client = Client.query.get_or_404(client_id)
-        widget_data = WidgetData(content=data['content'], widget=widget, client=client)
+        if client_id != None:
+            client = Client.query.get_or_404(client_id)
+            widget_data = WidgetData(content=data['content'], widget=widget, client=client)
+        else:
+            widget_data = WidgetData(content=data['content'], widget=widget)
         db.session.add(widget_data)
         db.session.commit()
         return widget_data

@@ -9,3 +9,5 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     ITEMS_PER_PAGE = 10
+    TEMPLATES_AUTO_RELOAD = True
+    TEMPLATE_FOLDER = 'templates'

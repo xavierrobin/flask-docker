@@ -8,6 +8,7 @@ import { Button, ModalFooter } from 'reactstrap';
 import {Tiptap} from './Tiptap.js'
 import StarterKit from '@tiptap/starter-kit'
 import DOMPurify from 'dompurify';
+import {entrypointClient} from '../config/entrypoint';
 
 interface Values {
   content: string;
@@ -27,7 +28,7 @@ const WidgetDataForm: FunctionComponent = (props: any) => {
 
         onSubmit={async (values, { setSubmitting, setStatus, setErrors }) => {
             try {
-              await fetch("http://localhost:8000/widget_data", {
+              await fetch(`${entrypointClient}/widget_data`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'

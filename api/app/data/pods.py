@@ -1,0 +1,1 @@
+pods = [('active_fixed_income', 'Active fixed income'), ('active_equity', 'Active equity'), ('emerging_markets', 'Emerging Markets'), ('esg', 'ESG'), ('etf', 'ETF'), ('exec', 'Execution desk / E-com'), ('ldi', 'LDI'), ('multi_assets', 'Multi-assets')]
