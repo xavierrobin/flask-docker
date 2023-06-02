@@ -48,11 +48,12 @@ async function getClientById(id: number) {
 
     return (
         <>
+        <Suspense fallback={<Loading />}>
         <div>
             <h1 className="display-3 spacing-mt-2 mb-3">{client.data.name}</h1>
         </div>
         <div className="row mb-3">
-          <div className="col-xl-5">
+          <div className="col-xl-6">
             <Team 
               banker={team.data.user_banker.email}
               sponsor={team.data.user_sponsor.email}
@@ -60,28 +61,24 @@ async function getClientById(id: number) {
               nextgen={team.data.user_nextgen.email}
               />
           </div>
-          <div className="col-xl-7">
+          <div className="col-xl-6">
             <Pods pods={client.data.pods} />
           </div>
-        </div>
-        <div className="row row-cols-1 row-cols-md-3">
-            
-            <Suspense fallback={<Loading />}>
-                {widgets && widgets.data.map((widget: Widget) => (
-                    <div className="col col-md-6 col-xl-6">
-                    <WidgetBs 
-                    id={widget.id}
-                    name={widget.name}
-                    client_id={params.id}
-                    latest_data={widget.widget_data[0]}
-                    history='true'
-                    />
-                    </div>
-                    )
-                    )              
-                    }
-            </Suspense>
-        </div>
+          {widgets && widgets.data.map((widget: Widget) => (
+              <div className="col-xl-6">
+                <WidgetBs 
+                id={widget.id}
+                name={widget.name}
+                client_id={params.id}
+                latest_data={widget.widget_data[0]}
+                history='true'
+                />
+              </div>
+              )
+              )              
+              }
+              </div>
+        </Suspense>
     </>
     );
   }

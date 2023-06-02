@@ -15,22 +15,22 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="h-100">
+    <html lang="en" className="">
       <head>
         {/* <link rel="stylesheet" href="https://sgwt-cdn-sgbs.sgmarkets.com/sg-bootstrap/5.5.1/core/css/sg-bootstrap-standard.min.css" /> */}
         {/* <link rel="stylesheet" href="https://sgwt-cdn-sgbs.sgmarkets.com/sg-bootstrap/5.5.1/icons/index.min.css" /> */}
       </head>
-      <body className="h-100">
+      <body className="">
       <section>
       <NextTopLoader color="#FF0000" showSpinner={false} />
       <TopNavbar />
       </section>
-      <div className="container-fluid bg-lvl2 h-100">
-        <div className="row h-100">
+      <div className="container-fluid bg-lvl2 ">
+        <div className="row ">
           <div className="col-lg-3 py-3 bg-lvl2">
               <LeftPane />
           </div>
-          <div className="col-lg-9 pt-3 bg-white  h-100 mw-100">
+          <div className="col-lg-9 pt-3 bg-white">
             {children}
           </div>
         </div>
