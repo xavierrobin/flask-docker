@@ -1,6 +1,6 @@
 import {entrypointServer} from '../../../../config/entrypoint';
 import WidgetBs from '../../../../components/WidgetBs.js'
-import Loading from './loading.js'
+import Loading from '../strategy/loading.js'
 import { Suspense } from "react";
 
 interface Widget {
@@ -9,31 +9,38 @@ interface Widget {
     widget_data: any;
   }
 
-async function getClientById(id: number) {
-    const res = await fetch(`${entrypointServer}/clients/${id}`, { cache: 'no-store' });
-    if (!res.ok) {
-      throw new Error('Failed to fetch data');
-    }
-    return res.json();
+  interface Opportunity {
+    id: number;
+    product: string;
+    sme: string;
+    client: any;
   }
   
   async function getWidgets(id: number) {
-    const res = await fetch(`${entrypointServer}/widgets?widget_type=strategy&client_id=${id}`, { cache: 'no-store' });
+    const res = await fetch(`${entrypointServer}/widgets?widget_type=opportunities&client_id=${id}`, { cache: 'no-store' });
     if (!res.ok) {
       throw new Error('Failed to fetch data');
     }
     return res.json();
   }
 
-  export default async function StrategyPage({
+  async function getOpportunities(id: number) {
+    const res = await fetch(`${entrypointServer}/opportunities/client/${id}`, { cache: 'no-store' });
+    if (!res.ok) {
+      throw new Error('Failed to fetch data');
+    }
+    return res.json();
+  }
+
+  export default async function OpportunitiesPage({
     params
   }: {
     params: { id: number}
   }) {
-    const clientData = getClientById(params.id);
+    const opportunitiesData = getOpportunities(params.id);
     const widgetsData = getWidgets(params.id);
 
-    const [client, widgets] = await Promise.all([clientData, widgetsData]);
+    const [opportunities, widgets] = await Promise.all([opportunitiesData, widgetsData]);
 
     return (
     <>
@@ -52,6 +59,15 @@ async function getClientById(id: number) {
                 )
                 )              
                 }
+            {opportunities && opportunities.data.map((opportunity: Opportunity) => (
+                <div className="col col-md-6 col-xl-6">
+                  {opportunity.product} - {opportunity.sme}
+                </div>
+                )
+                )              
+                }
+
+
         </Suspense>
       </div>
     </>

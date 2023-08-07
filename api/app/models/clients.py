@@ -9,6 +9,7 @@ class Client(db.Model):
     pods = db.Column(db.String(255))
     team = db.relationship('Team', backref='client', uselist=False, cascade="all, delete-orphan")
     opportunities = db.relationship('Opportunity', backref='client', lazy=True)
+    client_impact = db.Column(db.Boolean)
 
     def __repr__(self):
         return '<Client {}>'.format(self.name)

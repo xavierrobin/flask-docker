@@ -3,7 +3,7 @@ import { pods_list } from '../config/pods'
 function Pods(props) {
     return (
         <>
-            <div className="card card-bordered">
+            <div className="card card-bordered h-100">
                 <div className="card-body">
                     <h3 className="card-title">
                         Pods

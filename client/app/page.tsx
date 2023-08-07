@@ -1,10 +1,23 @@
 import {entrypointServer} from '../config/entrypoint';
 import WidgetBs from '../components/WidgetBs';
+import Kpi from '../components/Kpi';
 
 interface Widget {
   id: number;
   name: string;
   widget_data: any;
+}
+
+interface Kpi {
+  prefix: string;
+  value: any;
+  suffix: string;
+  symbol: string;
+  red: boolean;
+  amber: boolean;
+  green: boolean;
+  description: string;
+  name: string;
 }
 
 async function getWidgets() {
@@ -30,6 +43,20 @@ async function Home({}) {
         )
 
       )}
+      <div className="mt-3">
+        <Kpi
+            prefix="#"
+            value="23"
+            suffix=""
+            decimals="0"
+            symbol="m€"
+            red={false}
+            amber={false}
+            green={true}
+            description="Description du KPI"
+            name="Budget YTD 23 vs. 22"
+          />
+      </div>
     </main>
   )
 }

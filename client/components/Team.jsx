@@ -1,7 +1,7 @@
 function Team(props) {
     return (
         <>
-            <div className="card card-bordered">
+            <div className="card card-bordered h-100">
                 <div className="card-body">
                     <h3 className="card-title">
                         Team

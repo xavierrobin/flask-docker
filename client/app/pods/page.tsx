@@ -20,7 +20,7 @@ async function Pods({}) {
   console.log(data)
   return (
     <main className="container-fluid">
-      <h1>Pods</h1>
+      <h1 className="display-3 spacing-mt-2 mb-3">Pods</h1>
       {data && data.data.map((widget: Widget) => (
         <WidgetBs 
           id={widget.id} 

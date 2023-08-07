@@ -10,7 +10,8 @@ client_model = ns.model('Client', {
     'id': fields.Integer(readonly=True, description='The unique identifier of a client'),
     'name': fields.String(required=True, description='The name of a client'),
     'bdr_id': fields.String(required=False, description='The BDR ID of a client'),
-    'pods': fields.String(required=False, description='The client\'s pods')
+    'pods': fields.String(required=False, description='The client\'s pods'),
+    'client_impact': fields.Boolean(required=False, description='True if the client is part of the Client Impact initiative')
 })
 
 @ns.route('')

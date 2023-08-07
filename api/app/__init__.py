@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 from config import Config
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from wtforms import StringField, SelectMultipleField
+from wtforms import StringField, SelectMultipleField, BooleanField
 from wtforms.validators import DataRequired
 from flask_wtf import FlaskForm
 from flask_admin.form import Select2Field
@@ -59,6 +59,7 @@ def create_app(config_class=Config):
         name = StringField('Name', validators=[DataRequired()])
         bdr_id = StringField('BDR ID', validators=[DataRequired()])
         pods = SelectMultipleField('Pods', choices=[('active_fixed_income', 'Active fixed income'), ('active_equity', 'Active equity'), ('emerging_markets', 'Emerging Markets'), ('esg', 'ESG'), ('etf', 'ETF'), ('exec', 'Execution desk / E-com'), ('ldi', 'LDI'), ('multi_assets', 'Multi-assets')], validators=[DataRequired()])
+        client_impact = BooleanField('Client Impact')
 
     ### add view
     from app.models.clients import Client

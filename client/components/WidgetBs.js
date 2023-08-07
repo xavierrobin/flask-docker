@@ -5,7 +5,7 @@ import moment from 'moment';
 function WidgetBs(props) {
     return (
     <div>
-        <div className="card card-bordered" key={props.id} >
+        <div className="card card-bordered h-100" key={props.id} >
         <div className="card-body">
         {props.history && props.history == 'true' && (
             <div className='row'>
